@@ -23,11 +23,34 @@ export const OtpInput = ({ length = 4, onotpSubmit = () => {} }) => {
 
     // submit trigger
     const combinedOtp = newOtp.join("");
-    if (combinedOtp.length === length) onotpSubmit(newOtp, combinedOtp);
-  };
-  const handleClick = () => {};
-  const handleKeyDown = () => {};
+    if (combinedOtp.length === length) onotpSubmit(combinedOtp);
 
+    // Move to next input if current field is filled
+    if (value && index < length - 1 && inputRefs.current[index + 1]) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  const handleClick = (index) => {
+    inputRefs.current[index].setSelectionRange(1, 1);
+
+    // optional
+    if (index > 0 && !otp[index - 1]) {
+      inputRefs.current[otp.indexOf("")].focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (
+      e.key === "Backspace" &&
+      !otp[index] &&
+      index > 0 &&
+      inputRefs.current[index - 1]
+    ) {
+      // Move focus to the previous input field on backspace
+      inputRefs.current[index - 1].focus();
+    }
+  };
   return (
     <div>
       {otp.map((value, index) => {
